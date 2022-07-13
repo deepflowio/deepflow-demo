@@ -1,0 +1,281 @@
+####################################################
+# namespace
+####################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sb-jaeger-tracing-demo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-config
+  namespace: sb-jaeger-tracing-demo
+data:
+  REDIS_HOST: redis-master
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+    release: redis
+  name: redis-master
+  namespace: sb-jaeger-tracing-demo
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+    release: redis
+    role: master
+  ports:
+  - name: redis
+    port: 6379
+    protocol: TCP
+    targetPort: redis
+---
+apiVersion: apps/v1 # apps/v1beta2
+kind: StatefulSet
+metadata:
+  labels:
+    app: redis
+    chart: redis-3.0.2
+    release: redis
+  name: redis-master
+  namespace: sb-jaeger-tracing-demo
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis
+      release: redis
+      role: master
+  serviceName: redis-master
+  template:
+    metadata:
+      labels:
+        app: redis
+        release: redis
+        role: master
+    spec:
+      containers:
+      - name: redis-master
+        env:
+        - name: REDIS_DISABLE_COMMANDS
+          value: FLUSHDB,FLUSHALL
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        image: bitnami/redis:4.0.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /bitnami/redis/data
+          name: redis-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1001
+        # runAsUser: 1001
+        # https://github.com/bitnami/bitnami-docker-redis/issues/106#issuecomment-388884372
+        runAsUser: 0
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: redis-data
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sb-jaeger-tracing-demo
+  name: foo-svc
+  labels:
+    app: foo-svc
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: foo-svc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-svc
+  namespace: sb-jaeger-tracing-demo
+spec:
+  selector:
+    matchLabels:
+      app: foo-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: foo-svc
+    spec:
+      containers:
+      - name: foo-svc
+        image: chanjarster/spring-boot-istio-jaeger-demo-foo-svc:0.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+        envFrom:
+        - configMapRef:
+            name: demo-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sb-jaeger-tracing-demo
+  name: bar-svc
+  labels:
+    app: bar-svc
+spec:
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: bar-svc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar-svc
+  namespace: sb-jaeger-tracing-demo
+spec:
+  selector:
+    matchLabels:
+      app: bar-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bar-svc
+    spec:
+      containers:
+      - name: bar-svc
+        image: chanjarster/spring-boot-istio-jaeger-demo-bar-svc:0.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+        envFrom:
+        - configMapRef:
+            name: demo-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sb-jaeger-tracing-demo
+  name: loo-svc
+  labels:
+    app: loo-svc
+spec:
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: loo-svc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loo-svc
+  namespace: sb-jaeger-tracing-demo
+spec:
+  selector:
+    matchLabels:
+      app: loo-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loo-svc
+    spec:
+      containers:
+      - name: loo-svc
+        image: chanjarster/spring-boot-istio-jaeger-demo-loo-svc:0.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+        envFrom:
+        - configMapRef:
+            name: demo-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl
+  namespace: sb-jaeger-tracing-demo
+  labels:
+    app: curl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curl
+  template:
+    metadata:
+      labels:
+        app: curl
+    spec:
+      containers:
+      - name: curl
+        image: docker.io/litmuschaos/curl:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -exc
+        - |
+          while true
+          do
+          curl foo-svc
+          sleep 3
+          done

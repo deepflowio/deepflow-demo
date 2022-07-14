@@ -1,0 +1,608 @@
+# Copyright (c) 2022 Yunshan Networks
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##################################################################################################
+# Deployments
+##################################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: adservice
+  name: adservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adservice
+  template:
+    metadata:
+      labels:
+        app: adservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=adservice
+            - name: PORT
+              value: "9555"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/adservice:latest
+          name: adservice
+          ports:
+            - containerPort: 9555
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=cartservice
+            - name: REDIS_ADDR
+              value: redis-cart:6379
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/cartservice:latest
+          name: cartservice
+          ports:
+            - containerPort: 7070
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: checkoutservice
+  name: checkoutservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkoutservice
+  template:
+    metadata:
+      labels:
+        app: checkoutservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: CART_SERVICE_ADDR
+              value: cartservice:7070
+            - name: CURRENCY_SERVICE_ADDR
+              value: currencyservice:7000
+            - name: EMAIL_SERVICE_ADDR
+              value: emailservice:8080
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=checkoutservice
+            - name: PAYMENT_SERVICE_ADDR
+              value: paymentservice:50051
+            - name: PORT
+              value: "5050"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalogservice:3550
+            - name: SHIPPING_SERVICE_ADDR
+              value: shippingservice:50051
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/checkoutservice:latest
+          name: checkoutservice
+          ports:
+            - containerPort: 5050
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: currencyservice
+  name: currencyservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: currencyservice
+  template:
+    metadata:
+      labels:
+        app: currencyservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=currencyservice
+            - name: PORT
+              value: "7000"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/currencyservice:latest
+          name: currencyservice
+          ports:
+            - containerPort: 7000
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: emailservice
+  name: emailservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emailservice
+  template:
+    metadata:
+      labels:
+        app: emailservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_PYTHON_LOG_CORRELATION
+              value: "true"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=emailservice
+            - name: PORT
+              value: "8080"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/emailservice:latest
+          name: emailservice
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: AD_SERVICE_ADDR
+              value: adservice:9555
+            - name: CART_SERVICE_ADDR
+              value: cartservice:7070
+            - name: CHECKOUT_SERVICE_ADDR
+              value: checkoutservice:5050
+            - name: CURRENCY_SERVICE_ADDR
+              value: currencyservice:7000
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=frontend
+            - name: PORT
+              value: "8080"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalogservice:3550
+            - name: RECOMMENDATION_SERVICE_ADDR
+              value: recommendationservice:8080
+            - name: SHIPPING_SERVICE_ADDR
+              value: shippingservice:50051
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/frontend:latest
+          name: frontend
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: loadgenerator
+  name: loadgenerator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loadgenerator
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: FRONTEND_ADDR
+              value: frontend:8080
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=loadgenerator
+            - name: USERS
+              value: '10'
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/loadgenerator:latest
+          name: loadgenerator
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: paymentservice
+  name: paymentservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paymentservice
+  template:
+    metadata:
+      labels:
+        app: paymentservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=paymentservice
+            - name: PORT
+              value: "50051"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/paymentservice:latest
+          name: paymentservice
+          ports:
+            - containerPort: 50051
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productcatalogservice
+  name: productcatalogservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productcatalogservice
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=productcatalogservice
+            - name: PRODUCT_CATALOG_SERVICE_PORT
+              value: "3550"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/productcatalogservice:latest
+          name: productcatalogservice
+          ports:
+            - containerPort: 3550
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: recommendationservice
+  name: recommendationservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recommendationservice
+  template:
+    metadata:
+      labels:
+        app: recommendationservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_PYTHON_LOG_CORRELATION
+              value: "true"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=recommendationservice
+            - name: PORT
+              value: "8080"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalogservice:3550
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/recommendationservice:latest
+          name: recommendationservice
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shippingservice
+  name: shippingservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shippingservice
+  template:
+    metadata:
+      labels:
+        app: shippingservice
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: otel-endpoint-config
+                  key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=shippingservice
+            - name: PORT
+              value: "50051"
+          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/shippingservice:latest
+          name: shippingservice
+          ports:
+            - containerPort: 50051
+      restartPolicy: Always
+---
+##################################################################################################
+# ConfigMap
+##################################################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-endpoint-config
+  labels:
+    app: otel-endpoint-config
+    component: otel-endpoint-config
+data:
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-agent.open-telemetry:4317
+---
+##################################################################################################
+# Services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adservice
+  name: adservice
+spec:
+  ports:
+    - name: "9555"
+      port: 9555
+      targetPort: 9555
+  selector:
+    app: adservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+spec:
+  ports:
+    - name: "7070"
+      port: 7070
+      targetPort: 7070
+  selector:
+    app: cartservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: checkoutservice
+  name: checkoutservice
+spec:
+  ports:
+    - name: "5050"
+      port: 5050
+      targetPort: 5050
+  selector:
+    app: checkoutservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currencyservice
+  name: currencyservice
+spec:
+  ports:
+    - name: "7000"
+      port: 7000
+      targetPort: 7000
+  selector:
+    app: currencyservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: emailservice
+  name: emailservice
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: emailservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: paymentservice
+  name: paymentservice
+spec:
+  ports:
+    - name: "50051"
+      port: 50051
+      targetPort: 50051
+  selector:
+    app: paymentservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: productcatalogservice
+  name: productcatalogservice
+spec:
+  ports:
+    - name: "3550"
+      port: 3550
+      targetPort: 3550
+  selector:
+    app: productcatalogservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: recommendationservice
+  name: recommendationservice
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: recommendationservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: shippingservice
+  name: shippingservice
+spec:
+  ports:
+    - name: "50051"
+      port: 50051
+      targetPort: 50051
+  selector:
+    app: shippingservice
+---
+##################################################################################################
+# Storage Components
+##################################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis-cart
+  name: redis-cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-cart
+  template:
+    metadata:
+      labels:
+        app: redis-cart
+    spec:
+      containers:
+        - image: redis:alpine
+          name: redis-cart
+          ports:
+            - containerPort: 6379
+          resources: {}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis-cart
+  name: redis-cart
+spec:
+  ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis-cart

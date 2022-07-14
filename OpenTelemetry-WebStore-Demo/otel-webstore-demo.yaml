@@ -269,7 +269,7 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=loadgenerator
             - name: USERS
-              value: {{ .Values.load.user | quote }}
+              value: '10'
           image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore/loadgenerator:latest
           name: loadgenerator
       restartPolicy: Always

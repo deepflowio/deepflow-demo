@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    meta.helm.sh/release-name: telegraf
+  labels:
+    app.kubernetes.io/instance: telegraf
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: telegraf
+  name: telegraf
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: telegraf
+      app.kubernetes.io/name: telegraf
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: telegraf
+        app.kubernetes.io/name: telegraf
+    spec:
+      containers:
+      - env:
+        - name: HOSTNAME
+          value: telegraf-polling-service
+        image: telegraf:latest
+        imagePullPolicy: IfNotPresent
+        name: telegraf
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/telegraf
+          name: config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: telegraf
+        name: config

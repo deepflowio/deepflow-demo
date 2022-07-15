@@ -29,9 +29,17 @@
 ##################################################################################################
 # Details service
 ##################################################################################################
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metaflow-ebpf-istio-demo
+---
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: details
   labels:
     app: details
@@ -46,6 +54,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: bookinfo-details
   labels:
     account: details
@@ -53,6 +62,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: details-v1
   labels:
     app: details
@@ -85,6 +95,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: ratings
   labels:
     app: ratings
@@ -99,6 +110,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: bookinfo-ratings
   labels:
     account: ratings
@@ -106,6 +118,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: ratings-v1
   labels:
     app: ratings
@@ -138,6 +151,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: reviews
   labels:
     app: reviews
@@ -152,6 +166,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: bookinfo-reviews
   labels:
     account: reviews
@@ -159,6 +174,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: reviews-v1
   labels:
     app: reviews
@@ -201,6 +217,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: reviews-v2
   labels:
     app: reviews
@@ -243,6 +260,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: reviews-v3
   labels:
     app: reviews
@@ -288,6 +306,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: productpage
   labels:
     app: productpage
@@ -302,6 +321,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: bookinfo-productpage
   labels:
     account: productpage
@@ -309,6 +329,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: productpage-v1
   labels:
     app: productpage
@@ -344,6 +365,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-ebpf-istio-demo
   name: curl
   labels:
     app: curl

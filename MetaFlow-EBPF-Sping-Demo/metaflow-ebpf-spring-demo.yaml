@@ -1,18 +1,15 @@
-####################################################
-# namespace
-####################################################
+---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: sb-jaeger-tracing-otel-demo
+  name: metaflow-ebpf-spring-demo
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: demo-config
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 data:
-  JAEGER_UDP_SENDER_HOST: otel-agent.open-telemetry:14250
   REDIS_HOST: redis-master
 ---
 apiVersion: v1
@@ -22,7 +19,7 @@ metadata:
     app: redis
     release: redis
   name: redis-master
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 spec:
   type: ClusterIP
   selector:
@@ -43,7 +40,7 @@ metadata:
     chart: redis-3.0.2
     release: redis
   name: redis-master
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
@@ -118,7 +115,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
   name: foo-svc
   labels:
     app: foo-svc
@@ -135,7 +132,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: foo-svc
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -163,7 +160,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
   name: bar-svc
   labels:
     app: bar-svc
@@ -180,7 +177,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bar-svc
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -208,7 +205,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
   name: loo-svc
   labels:
     app: loo-svc
@@ -225,7 +222,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loo-svc
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -254,7 +251,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: curl
-  namespace: sb-jaeger-tracing-otel-demo
+  namespace: metaflow-ebpf-spring-demo
   labels:
     app: curl
 spec:
@@ -277,6 +274,6 @@ spec:
         - |
           while true
           do
-          curl foo-svc
+          curl -i foo-svc
           sleep 3
           done

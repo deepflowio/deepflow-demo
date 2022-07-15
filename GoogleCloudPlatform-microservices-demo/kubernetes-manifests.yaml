@@ -18,9 +18,15 @@
 
 # [START gke_release_kubernetes_manifests_microservices_demo]
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metaflow-autometrics-demo
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: emailservice
 spec:
   selector:
@@ -64,6 +70,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: emailservice
 spec:
   type: ClusterIP
@@ -77,6 +84,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: checkoutservice
 spec:
   selector:
@@ -133,6 +141,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: checkoutservice
 spec:
   type: ClusterIP
@@ -146,6 +155,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: recommendationservice
 spec:
   selector:
@@ -193,6 +203,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: recommendationservice
 spec:
   type: ClusterIP
@@ -206,6 +217,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: frontend
 spec:
   selector:
@@ -280,6 +292,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: frontend
 spec:
   type: ClusterIP
@@ -293,6 +306,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: frontend-external
 spec:
   type: NodePort
@@ -306,6 +320,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: paymentservice
 spec:
   selector:
@@ -349,6 +364,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: paymentservice
 spec:
   type: ClusterIP
@@ -362,6 +378,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: productcatalogservice
 spec:
   selector:
@@ -407,6 +424,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: productcatalogservice
 spec:
   type: ClusterIP
@@ -420,6 +438,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: cartservice
 spec:
   selector:
@@ -460,6 +479,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: cartservice
 spec:
   type: ClusterIP
@@ -473,6 +493,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: loadgenerator
 spec:
   selector:
@@ -524,6 +545,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: currencyservice
 spec:
   selector:
@@ -568,6 +590,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: currencyservice
 spec:
   type: ClusterIP
@@ -581,6 +604,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: shippingservice
 spec:
   selector:
@@ -626,6 +650,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: shippingservice
 spec:
   type: ClusterIP
@@ -639,6 +664,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: redis-cart
 spec:
   selector:
@@ -679,6 +705,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: redis-cart
 spec:
   type: ClusterIP
@@ -692,6 +719,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: metaflow-autometrics-demo
   name: adservice
 spec:
   selector:
@@ -739,6 +767,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: metaflow-autometrics-demo
   name: adservice
 spec:
   type: ClusterIP

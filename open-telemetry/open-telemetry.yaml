@@ -49,7 +49,7 @@ data:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: k8sattributes, resource, memory_limiter, batch]
+          processors: [k8sattributes, resource, memory_limiter, batch]
           exporters: [otlphttp]
 ---
 apiVersion: apps/v1
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
       - command:
-          - "/otelcol"
+          - "/otelcol-contrib"
           - "--config=/conf/otel-agent-config.yaml"
         image: otel/opentelemetry-collector-contrib:0.55.0
         name: otel-agent
@@ -98,6 +98,8 @@ spec:
         volumeMounts:
         - name: otel-agent-config-vol
           mountPath: /conf
+      serviceAccountName: opentelemetry-collector
+      serviceAccount: opentelemetry-collector
       volumes:
         - configMap:
             name: otel-agent-conf
@@ -128,3 +130,31 @@ spec:
     port: 8888
   selector:
     component: otel-agent
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opentelemetry-collector
+  namespace: open-telemetry
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector-role-binding
+subjects:
+- kind: ServiceAccount
+  name: opentelemetry-collector
+  namespace: open-telemetry
+roleRef:
+  kind: ClusterRole
+  name: otel-collector-role
+  apiGroup: rbac.authorization.k8s.io

@@ -16,9 +16,17 @@
 # This file defines the services, deployments, configmap, statefulsets 
 #
 # To deploy full demo, you can :
-# kubectl apply -f springboot-otel-demo.yaml -n ${YOUR-NAMESPACE}
+# kubectl apply -f metaflow-otel-skywalking-demo.yaml
 ##################################################################################################
 
+##################################################################################################
+# Namespace
+##################################################################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metaflow-otel-skywalking-demo
+---
 ##################################################################################################
 # Deployments
 ##################################################################################################
@@ -26,6 +34,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: svc-item
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -40,15 +49,6 @@ spec:
       containers:
       - name: svc-item
         image: registry.cn-beijing.aliyuncs.com/metaflow-demo/skywalking-demo_mydemo-item:1.0
-        command:
-          - sh
-        args:
-          - /home/docker-entrypoint.sh
-          - '-javaagent:/sidecar/agent/opentelemetry-javaagent.jar'
-          - '-Dotel.resource.attributes=service.name=order-svc'
-          - '-Dotel.traces.exporter=otlp'
-          - '-jar'
-          - /home/order-service-0.0.1-SNAPSHOT.jar
         imagePullPolicy: IfNotPresent
         env:
         - name: SERVICE_HOST
@@ -59,8 +59,10 @@ spec:
           value: "20880"
         - name: SW_AGENT_NAME
           value: spring-svc-item
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://otel-agent.open-telemetry:4317
+        - name: SKYWALKING_HOST
+          value: otel-agent.open-telemetry
+        - name: SKYWALKING_PORT
+          value: '11800'
         ports:
         - containerPort: 20880
         volumeMounts:
@@ -71,12 +73,13 @@ spec:
             subPath: application.yml
       initContainers:
         - name: sidecar
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-javaagent:1.15.0
+          image: apache/skywalking-java-agent:8.11.0-java8
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
           args:
             - '-c'
-            - cp -R /opentelemetry/agent /sidecar/
+            - cp -R /skywalking/agent /sidecar/
           volumeMounts:
             - name: sidecar
               mountPath: /sidecar
@@ -91,6 +94,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: svc-order
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -117,8 +121,10 @@ spec:
           value: "20880"
         - name: SW_AGENT_NAME
           value: spring-svc-order
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://otel-agent.open-telemetry:4317
+        - name: SKYWALKING_HOST
+          value: otel-agent.open-telemetry
+        - name: SKYWALKING_PORT
+          value: '11800'
         ports:
         - containerPort: 20880
         volumeMounts:
@@ -126,12 +132,13 @@ spec:
             mountPath: /sidecar
       initContainers:
         - name: sidecar
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-javaagent:1.15.0
+          image: apache/skywalking-java-agent:8.11.0-java8
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
           args:
             - '-c'
-            - cp -R /opentelemetry/agent /sidecar/
+            - cp -R /skywalking/agent /sidecar/
           volumeMounts:
             - name: sidecar
               mountPath: /sidecar
@@ -146,6 +153,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: svc-stock
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -170,8 +178,10 @@ spec:
           value: "20880"
         - name: SW_AGENT_NAME
           value: spring-svc-stock
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://otel-agent.open-telemetry:4317
+        - name: SKYWALKING_HOST
+          value: otel-agent.open-telemetry
+        - name: SKYWALKING_PORT
+          value: '11800'
         ports:
         - containerPort: 20880
         volumeMounts:
@@ -182,12 +192,13 @@ spec:
             subPath: application.yml
       initContainers:
         - name: sidecar
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-javaagent:1.15.0
+          image: apache/skywalking-java-agent:8.11.0-java8
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
           args:
             - '-c'
-            - cp -R /opentelemetry/agent /sidecar/
+            - cp -R /skywalking/agent /sidecar/
           volumeMounts:
             - name: sidecar
               mountPath: /sidecar
@@ -202,6 +213,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: svc-user
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -228,8 +240,10 @@ spec:
           value: "20880"
         - name: SW_AGENT_NAME
           value: spring-svc-user
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://otel-agent.open-telemetry:4317
+        - name: SKYWALKING_HOST
+          value: otel-agent.open-telemetry
+        - name: SKYWALKING_PORT
+          value: '11800'
         ports:
         - containerPort: 20880
         volumeMounts:
@@ -240,12 +254,13 @@ spec:
             subPath: application.yml
       initContainers:
         - name: sidecar
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-javaagent:1.15.0
+          image: apache/skywalking-java-agent:8.11.0-java8
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
           args:
             - '-c'
-            - cp -R /opentelemetry/agent /sidecar/
+            - cp -R /skywalking/agent /sidecar/
           volumeMounts:
             - name: sidecar
               mountPath: /sidecar
@@ -260,6 +275,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-shop
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -280,19 +296,22 @@ spec:
         env:
         - name: SW_AGENT_NAME
           value: spring-svc-webshop
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://otel-agent.open-telemetry:4317
+        - name: SKYWALKING_HOST
+          value: otel-agent.open-telemetry
+        - name: SKYWALKING_PORT
+          value: '11800'
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
       initContainers:
         - name: sidecar
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-javaagent:1.15.0
+          image: apache/skywalking-java-agent:8.11.0-java8
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
           args:
             - '-c'
-            - cp -R /opentelemetry/agent /sidecar/
+            - cp -R /skywalking/agent /sidecar/
           volumeMounts:
             - name: sidecar
               mountPath: /sidecar
@@ -304,6 +323,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loadgenerator
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   selector:
@@ -335,6 +355,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: db-demo
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   serviceName: db-demo
@@ -367,6 +388,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: nacos
+  namespace: metaflow-otel-skywalking-demo
 spec:
   replicas: 1
   serviceName: nacos
@@ -452,6 +474,7 @@ data:
 kind: ConfigMap
 metadata:
   name: item-service
+  namespace: metaflow-otel-skywalking-demo
 ---
 apiVersion: v1
 data:
@@ -551,6 +574,7 @@ data:
 kind: ConfigMap
 metadata:
   name: order-service
+  namespace: metaflow-otel-skywalking-demo
 ---
 apiVersion: v1
 data:
@@ -603,6 +627,7 @@ data:
 kind: ConfigMap
 metadata:
   name: stock-service
+  namespace: metaflow-otel-skywalking-demo
 ---
 apiVersion: v1
 data:
@@ -711,6 +736,7 @@ data:
 kind: ConfigMap
 metadata:
   name: user-service
+  namespace: metaflow-otel-skywalking-demo
 ---
 ##################################################################################################
 # Services
@@ -719,6 +745,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nacos
+  namespace: metaflow-otel-skywalking-demo
 spec:
   type: ClusterIP
   ports:
@@ -732,6 +759,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: web-shop
+  namespace: metaflow-otel-skywalking-demo
 spec:
   type: ClusterIP
   ports:
@@ -745,6 +773,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: db-demo
+  namespace: metaflow-otel-skywalking-demo
 spec:
   type: ClusterIP
   ports:

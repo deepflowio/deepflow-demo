@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: telegraf
   name: telegraf
+  namespace: metaflow-telegraf-demo
 spec:
   selector:
     matchLabels:

@@ -250,19 +250,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: curl
+  name: loadgenerator
   namespace: metaflow-ebpf-spring-demo
   labels:
-    app: curl
+    app: loadgenerator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: curl
+      app: loadgenerator
   template:
     metadata:
       labels:
-        app: curl
+        app: loadgenerator
     spec:
       containers:
       - name: curl

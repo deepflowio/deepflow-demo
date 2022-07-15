@@ -366,18 +366,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: metaflow-ebpf-istio-demo
-  name: curl
+  name: loadgenerator
   labels:
-    app: curl
+    app: loadgenerator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: curl
+      app: loadgenerator
   template:
     metadata:
       labels:
-        app: curl
+        app: loadgenerator
     spec:
       containers:
       - name: curl

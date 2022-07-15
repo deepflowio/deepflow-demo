@@ -284,7 +284,7 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=loadgenerator
             - name: USERS
-              value: '10'
+              value: '1'
           image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_loadgenerator:latest
           name: loadgenerator
       restartPolicy: Always

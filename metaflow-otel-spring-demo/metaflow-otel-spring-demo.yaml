@@ -370,7 +370,7 @@ spec:
           image: registry.cn-beijing.aliyuncs.com/metaflow-demo/skywalking-demo_loadgenerator:latest
           env:
             - name: FRONTEND_ADDR
-              value: web-shop:8080
+              value: web-shop:8090
             - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
               value: http://otel-agent.open-telemetry:4317
             - name: OTEL_RESOURCE_ATTRIBUTES

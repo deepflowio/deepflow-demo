@@ -18,7 +18,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: metaflow-otel-grpc-demo
+  name: deepflow-otel-grpc-demo
 ---
 ##################################################################################################
 # Deployments
@@ -29,7 +29,7 @@ metadata:
   labels:
     app: adservice
   name: adservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -51,7 +51,7 @@ spec:
               value: service.name=adservice
             - name: PORT
               value: "9555"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_adservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_adservice:latest
           name: adservice
           ports:
             - containerPort: 9555
@@ -63,7 +63,7 @@ metadata:
   labels:
     app: cartservice
   name: cartservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -85,7 +85,7 @@ spec:
               value: service.name=cartservice
             - name: REDIS_ADDR
               value: redis-cart:6379
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_cartservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_cartservice:latest
           name: cartservice
           ports:
             - containerPort: 7070
@@ -97,7 +97,7 @@ metadata:
   labels:
     app: checkoutservice
   name: checkoutservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -131,7 +131,7 @@ spec:
               value: productcatalogservice:3550
             - name: SHIPPING_SERVICE_ADDR
               value: shippingservice:50051
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_checkoutservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_checkoutservice:latest
           name: checkoutservice
           ports:
             - containerPort: 5050
@@ -143,7 +143,7 @@ metadata:
   labels:
     app: currencyservice
   name: currencyservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -165,7 +165,7 @@ spec:
               value: service.name=currencyservice
             - name: PORT
               value: "7000"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_currencyservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_currencyservice:latest
           name: currencyservice
           ports:
             - containerPort: 7000
@@ -177,7 +177,7 @@ metadata:
   labels:
     app: emailservice
   name: emailservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -201,7 +201,7 @@ spec:
               value: service.name=emailservice
             - name: PORT
               value: "8080"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_emailservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_emailservice:latest
           name: emailservice
           ports:
             - containerPort: 8080
@@ -213,7 +213,7 @@ metadata:
   labels:
     app: frontend
   name: frontend
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -249,7 +249,7 @@ spec:
               value: recommendationservice:8080
             - name: SHIPPING_SERVICE_ADDR
               value: shippingservice:50051
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_frontend:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_frontend:latest
           name: frontend
           ports:
             - containerPort: 8080
@@ -261,7 +261,7 @@ metadata:
   labels:
     app: loadgenerator
   name: loadgenerator
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -285,7 +285,7 @@ spec:
               value: service.name=loadgenerator
             - name: USERS
               value: '1'
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_loadgenerator:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_loadgenerator:latest
           name: loadgenerator
       restartPolicy: Always
 ---
@@ -295,7 +295,7 @@ metadata:
   labels:
     app: paymentservice
   name: paymentservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -317,7 +317,7 @@ spec:
               value: service.name=paymentservice
             - name: PORT
               value: "50051"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_paymentservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_paymentservice:latest
           name: paymentservice
           ports:
             - containerPort: 50051
@@ -329,7 +329,7 @@ metadata:
   labels:
     app: productcatalogservice
   name: productcatalogservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -351,7 +351,7 @@ spec:
               value: service.name=productcatalogservice
             - name: PRODUCT_CATALOG_SERVICE_PORT
               value: "3550"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_productcatalogservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_productcatalogservice:latest
           name: productcatalogservice
           ports:
             - containerPort: 3550
@@ -363,7 +363,7 @@ metadata:
   labels:
     app: recommendationservice
   name: recommendationservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -389,7 +389,7 @@ spec:
               value: "8080"
             - name: PRODUCT_CATALOG_SERVICE_ADDR
               value: productcatalogservice:3550
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_recommendationservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_recommendationservice:latest
           name: recommendationservice
           ports:
             - containerPort: 8080
@@ -401,7 +401,7 @@ metadata:
   labels:
     app: shippingservice
   name: shippingservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -423,7 +423,7 @@ spec:
               value: service.name=shippingservice
             - name: PORT
               value: "50051"
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/opentelemetry-demo-webstore_shippingservice:latest
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-demo-webstore_shippingservice:latest
           name: shippingservice
           ports:
             - containerPort: 50051
@@ -436,7 +436,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-endpoint-config
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
   labels:
     app: otel-endpoint-config
     component: otel-endpoint-config
@@ -452,7 +452,7 @@ metadata:
   labels:
     app: adservice
   name: adservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "9555"
@@ -467,7 +467,7 @@ metadata:
   labels:
     app: cartservice
   name: cartservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "7070"
@@ -482,7 +482,7 @@ metadata:
   labels:
     app: checkoutservice
   name: checkoutservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "5050"
@@ -497,7 +497,7 @@ metadata:
   labels:
     app: currencyservice
   name: currencyservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "7000"
@@ -512,7 +512,7 @@ metadata:
   labels:
     app: emailservice
   name: emailservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "8080"
@@ -527,7 +527,7 @@ metadata:
   labels:
     app: frontend
   name: frontend
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "8080"
@@ -542,7 +542,7 @@ metadata:
   labels:
     app: paymentservice
   name: paymentservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "50051"
@@ -557,7 +557,7 @@ metadata:
   labels:
     app: productcatalogservice
   name: productcatalogservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "3550"
@@ -572,7 +572,7 @@ metadata:
   labels:
     app: recommendationservice
   name: recommendationservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "8080"
@@ -587,7 +587,7 @@ metadata:
   labels:
     app: shippingservice
   name: shippingservice
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "50051"
@@ -605,7 +605,7 @@ metadata:
   labels:
     app: redis-cart
   name: redis-cart
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   replicas: 1
   selector:
@@ -630,7 +630,7 @@ metadata:
   labels:
     app: redis-cart
   name: redis-cart
-  namespace: metaflow-otel-grpc-demo
+  namespace: deepflow-otel-grpc-demo
 spec:
   ports:
     - name: "6379"

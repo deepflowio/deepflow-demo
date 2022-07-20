@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: metaflow-ebpf-spring-demo
+  name: deepflow-ebpf-spring-demo
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: demo-config
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 data:
   REDIS_HOST: redis-master
 ---
@@ -19,7 +19,7 @@ metadata:
     app: redis
     release: redis
   name: redis-master
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 spec:
   type: ClusterIP
   selector:
@@ -40,7 +40,7 @@ metadata:
     chart: redis-3.0.2
     release: redis
   name: redis-master
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
@@ -115,7 +115,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
   name: foo-svc
   labels:
     app: foo-svc
@@ -132,7 +132,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: foo-svc
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -160,7 +160,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
   name: bar-svc
   labels:
     app: bar-svc
@@ -177,7 +177,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bar-svc
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -205,7 +205,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
   name: loo-svc
   labels:
     app: loo-svc
@@ -222,7 +222,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loo-svc
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
 spec:
   selector:
     matchLabels:
@@ -251,7 +251,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loadgenerator
-  namespace: metaflow-ebpf-spring-demo
+  namespace: deepflow-ebpf-spring-demo
   labels:
     app: loadgenerator
 spec:

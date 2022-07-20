@@ -21,12 +21,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: metaflow-autometrics-demo
+  name: deepflow-autometrics-demo
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: emailservice
 spec:
   selector:
@@ -41,7 +41,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/emailservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/emailservice:v0.3.8
         ports:
         - containerPort: 8080
         env:
@@ -70,7 +70,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: emailservice
 spec:
   type: ClusterIP
@@ -84,7 +84,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: checkoutservice
 spec:
   selector:
@@ -98,7 +98,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/checkoutservice:v0.3.8
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/checkoutservice:v0.3.8
           ports:
           - containerPort: 5050
           readinessProbe:
@@ -141,7 +141,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: checkoutservice
 spec:
   type: ClusterIP
@@ -155,7 +155,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: recommendationservice
 spec:
   selector:
@@ -170,7 +170,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/recommendationservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/recommendationservice:v0.3.8
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -203,7 +203,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: recommendationservice
 spec:
   type: ClusterIP
@@ -217,7 +217,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: frontend
 spec:
   selector:
@@ -233,7 +233,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: registry.cn-beijing.aliyuncs.com/metaflow-demo/frontend:v0.3.8
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/frontend:v0.3.8
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -292,7 +292,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: frontend
 spec:
   type: ClusterIP
@@ -306,7 +306,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: frontend-external
 spec:
   type: NodePort
@@ -320,7 +320,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: paymentservice
 spec:
   selector:
@@ -335,7 +335,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/paymentservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/paymentservice:v0.3.8
         ports:
         - containerPort: 50051
         env:
@@ -364,7 +364,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: paymentservice
 spec:
   type: ClusterIP
@@ -378,7 +378,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: productcatalogservice
 spec:
   selector:
@@ -393,7 +393,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/productcatalogservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/productcatalogservice:v0.3.8
         ports:
         - containerPort: 3550
         env:
@@ -424,7 +424,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: productcatalogservice
 spec:
   type: ClusterIP
@@ -438,7 +438,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: cartservice
 spec:
   selector:
@@ -453,7 +453,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/cartservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/cartservice:v0.3.8
         ports:
         - containerPort: 7070
         env:
@@ -479,7 +479,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: cartservice
 spec:
   type: ClusterIP
@@ -493,7 +493,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: loadgenerator
 spec:
   selector:
@@ -528,7 +528,7 @@ spec:
           value: "frontend:80"
       containers:
       - name: main
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/loadgenerator:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/loadgenerator:v0.3.8
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"
@@ -545,7 +545,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: currencyservice
 spec:
   selector:
@@ -560,7 +560,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/currencyservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/currencyservice:v0.3.8
         ports:
         - name: grpc
           containerPort: 7000
@@ -590,7 +590,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: currencyservice
 spec:
   type: ClusterIP
@@ -604,7 +604,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: shippingservice
 spec:
   selector:
@@ -618,7 +618,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/shippingservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/shippingservice:v0.3.8
         ports:
         - containerPort: 50051
         env:
@@ -650,7 +650,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: shippingservice
 spec:
   type: ClusterIP
@@ -664,7 +664,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: redis-cart
 spec:
   selector:
@@ -705,7 +705,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: redis-cart
 spec:
   type: ClusterIP
@@ -719,7 +719,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: adservice
 spec:
   selector:
@@ -734,7 +734,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: registry.cn-beijing.aliyuncs.com/metaflow-demo/adservice:v0.3.8
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/adservice:v0.3.8
         ports:
         - containerPort: 9555
         env:
@@ -767,7 +767,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: metaflow-autometrics-demo
+  namespace: deepflow-autometrics-demo
   name: adservice
 spec:
   type: ClusterIP

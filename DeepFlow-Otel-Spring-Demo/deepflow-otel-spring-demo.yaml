@@ -46,6 +46,25 @@ spec:
         app: svc-item
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: svc-item
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-item:1.0
@@ -112,6 +131,25 @@ spec:
         app: svc-order
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: svc-order
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-order:1.0
@@ -177,6 +215,25 @@ spec:
         app: svc-stock
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: svc-stock
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-stock:1.0
@@ -243,6 +300,25 @@ spec:
         app: svc-user
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: svc-user
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-user:1.0
@@ -311,6 +387,25 @@ spec:
         app: web-shop
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: web-shop
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-shopweb:1.0
@@ -365,6 +460,25 @@ spec:
         app: loadgenerator
         version: latest
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
         - name: loadgenerator
           image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_loadgenerator:latest
@@ -398,6 +512,25 @@ spec:
         app: db-demo
         version: 5.7.18
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: db-demo
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-mysql:1.0
@@ -431,6 +564,25 @@ spec:
         app: nacos
         version: 1.1.4
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - svc-item
+                  - svc-order
+                  - svc-stock
+                  - svc-user
+                  - web-shop
+                  - loadgenerator
+                  - db-demo
+                  - nacos
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: nacos
         image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-nacos-server:1.1.4

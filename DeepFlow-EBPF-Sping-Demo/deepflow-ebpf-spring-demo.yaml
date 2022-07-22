@@ -58,6 +58,22 @@ spec:
         release: redis
         role: master
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - loo-svc
+                  - foo-svc
+                  - bar-svc
+                  - loadgenerator
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: redis-master
         env:
@@ -143,6 +159,22 @@ spec:
       labels:
         app: foo-svc
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - loo-svc
+                  - foo-svc
+                  - bar-svc
+                  - loadgenerator
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: foo-svc
         image: chanjarster/spring-boot-istio-jaeger-demo-foo-svc:0.1.0
@@ -188,6 +220,22 @@ spec:
       labels:
         app: bar-svc
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - loo-svc
+                  - foo-svc
+                  - bar-svc
+                  - loadgenerator
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: bar-svc
         image: chanjarster/spring-boot-istio-jaeger-demo-bar-svc:0.1.0
@@ -233,6 +281,22 @@ spec:
       labels:
         app: loo-svc
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - loo-svc
+                  - foo-svc
+                  - bar-svc
+                  - loadgenerator
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: loo-svc
         image: chanjarster/spring-boot-istio-jaeger-demo-loo-svc:0.1.0
@@ -264,6 +328,22 @@ spec:
       labels:
         app: loadgenerator
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - loo-svc
+                  - foo-svc
+                  - bar-svc
+                  - loadgenerator
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: curl
         image: docker.io/litmuschaos/curl:latest

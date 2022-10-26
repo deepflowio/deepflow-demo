@@ -75,7 +75,7 @@ spec:
       - command:
           - "/otelcol-contrib"
           - "--config=/conf/otel-agent-config.yaml"
-        image: otel/opentelemetry-collector-contrib:0.55.0
+        image: otel/opentelemetry-collector-contrib:0.62.0
         name: otel-agent
         resources:
           limits:

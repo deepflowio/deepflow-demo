@@ -1,0 +1,240 @@
+# Copyright (c) 2022 Yunshan Networks
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##################################################################################################
+# Namespace
+##################################################################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deepflow-cp-java-demo
+---
+##################################################################################################
+# Deployments
+##################################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: java-ap-south
+  name: java-ap-south
+  namespace: deepflow-cp-java-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: java-ap-south
+  template:
+    metadata:
+      labels:
+        app: java-ap-south
+    spec:
+      containers:
+      - name: java-ap-south
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/java-cp-demo-deployment:latest
+        command:
+        - java
+        - -javaagent:pyroscope.jar
+        - -jar
+        - ./build/libs/rideshare-1.0-SNAPSHOT.jar
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: http://${HOST_IP}:38086
+        - name: REGION
+          value: ap-south
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: java-eu-north
+  name: java-eu-north
+  namespace: deepflow-cp-java-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: java-eu-north
+  template:
+    metadata:
+      labels:
+        app: java-eu-north
+    spec:
+      containers:
+      - name: java-eu-north
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/java-cp-demo-deployment:latest
+        command:
+        - java
+        - -javaagent:pyroscope.jar
+        - -jar
+        - ./build/libs/rideshare-1.0-SNAPSHOT.jar
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: http://${HOST_IP}:38086
+        - name: REGION
+          value: eu-north
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: java-us-east
+  name: java-us-east
+  namespace: deepflow-cp-java-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: java-us-east
+  template:
+    metadata:
+      labels:
+        app: java-us-east
+    spec:
+      containers:
+      - name: java-us-east
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/java-cp-demo-deployment:latest
+        command:
+        - java
+        - -javaagent:pyroscope.jar
+        - -jar
+        - ./build/libs/rideshare-1.0-SNAPSHOT.jar
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: http://${HOST_IP}:38086
+        - name: REGION
+          value: us-east
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: loadgenerator
+  name: loadgenerator
+  namespace: deepflow-cp-java-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: loadgenerator
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+    spec:
+      containers:
+      - name: loadgenerator
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/continuous-profile-loadgenerator:latest
+        command:
+        - python
+        - load-generator.py
+        imagePullPolicy: IfNotPresent
+---
+##################################################################################################
+# Services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: java-eu-north
+  name: eu-north
+  namespace: deepflow-cp-java-demo
+spec:
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: java-eu-north
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: java-ap-south
+  name: ap-south
+  namespace: deepflow-cp-java-demo
+spec:
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: java-ap-south
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: java-us-east
+  name: us-east
+  namespace: deepflow-cp-java-demo
+spec:
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: java-us-east
+  sessionAffinity: None
+  type: ClusterIP

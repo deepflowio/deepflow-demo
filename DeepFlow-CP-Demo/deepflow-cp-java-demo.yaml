@@ -57,7 +57,7 @@ spec:
               apiVersion: v1
               fieldPath: status.hostIP
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: http://${HOST_IP}:38086
+          value: http://deepflow-agent.deepflow/api/v1/profile/
         - name: REGION
           value: ap-south
         imagePullPolicy: IfNotPresent
@@ -99,7 +99,7 @@ spec:
               apiVersion: v1
               fieldPath: status.hostIP
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: http://${HOST_IP}:38086
+          value: http://deepflow-agent.deepflow/api/v1/profile/
         - name: REGION
           value: eu-north
         imagePullPolicy: IfNotPresent
@@ -141,7 +141,7 @@ spec:
               apiVersion: v1
               fieldPath: status.hostIP
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: http://${HOST_IP}:38086
+          value: http://deepflow-agent.deepflow/api/v1/profile/
         - name: REGION
           value: us-east
         imagePullPolicy: IfNotPresent

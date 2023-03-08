@@ -58,7 +58,7 @@ spec:
               apiVersion: v1
               fieldPath: status.hostIP
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: http://${HOST_IP}:38086
+          value: http://deepflow-agent.deepflow/api/v1/profile
 ---
 apiVersion: apps/v1
 kind: Deployment

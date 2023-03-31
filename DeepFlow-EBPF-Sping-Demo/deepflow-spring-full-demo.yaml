@@ -1,0 +1,370 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deepflow-spring-full-demo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-config
+  namespace: deepflow-spring-full-demo
+data:
+  REDIS_HOST: redis-master
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+    release: redis
+  name: redis-master
+  namespace: deepflow-spring-full-demo
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+    release: redis
+    role: master
+  ports:
+  - name: redis
+    port: 6379
+    protocol: TCP
+    targetPort: redis
+---
+apiVersion: apps/v1 # apps/v1beta2
+kind: StatefulSet
+metadata:
+  labels:
+    app: redis
+    chart: redis-3.0.2
+    release: redis
+  name: redis-master
+  namespace: deepflow-spring-full-demo
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis
+      release: redis
+      role: master
+  serviceName: redis-master
+  template:
+    metadata:
+      labels:
+        app: redis
+        release: redis
+        role: master
+    spec:
+      containers:
+      - name: redis-master
+        env:
+        - name: REDIS_DISABLE_COMMANDS
+          value: FLUSHDB,FLUSHALL
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        image: bitnami/redis:4.0.9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /bitnami/redis/data
+          name: redis-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 0
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: redis-data
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: deepflow-spring-full-demo
+  name: foo-svc-full
+  labels:
+    app: foo-svc-full
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: foo-svc-full
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-svc-full
+  namespace: deepflow-spring-full-demo
+spec:
+  selector:
+    matchLabels:
+      app: foo-svc-full
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: foo-svc-full
+    spec:
+      containers:
+      - name: foo-svc-full
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/springboot-demo-foo-svc:feature-otel
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+          - name: OPENTRACING_JAEGER_ENABLED
+            value: "false"
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://otel-agent.open-telemetry:4317
+        command:
+          - /usr/bin/java
+        args:
+          - '-javaagent:/sidecar/agent/opentelemetry-javaagent.jar'
+          - '-Dotel.service.name=foo-svc-full'
+          - '-Dotel.traces.exporter=otlp'
+          - '-Dotel.metrics.exporter=none'
+          - -Djava.io.tmpdir=/home/java-app/tmp
+          - '-jar'
+          - /home/java-app/lib/app.jar
+        envFrom:
+        - configMapRef:
+            name: demo-config
+        volumeMounts:
+          - name: sidecar
+            mountPath: /sidecar
+      initContainers:
+        - name: sidecar
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-javaagent:1.24.0
+          command:
+            - /bin/sh
+          args:
+            - '-c'
+            - cp -R /opentelemetry/agent /sidecar/
+          volumeMounts:
+            - name: sidecar
+              mountPath: /sidecar
+      volumes:
+        - name: sidecar
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: deepflow-spring-full-demo
+  name: bar-svc-full
+  labels:
+    app: bar-svc-full
+spec:
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: bar-svc-full
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar-svc-full
+  namespace: deepflow-spring-full-demo
+spec:
+  selector:
+    matchLabels:
+      app: bar-svc-full
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bar-svc-full
+    spec:
+      containers:
+      - name: bar-svc-full
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/springboot-demo-bar-svc:feature-otel
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+          - name: OPENTRACING_JAEGER_ENABLED
+            value: "false"
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://otel-agent.open-telemetry:4317
+        command:
+          - /usr/bin/java
+        args:
+          - '-javaagent:/sidecar/agent/opentelemetry-javaagent.jar'
+          - '-Dotel.service.name=bar-svc-full'
+          - '-Dotel.traces.exporter=otlp'
+          - '-Dotel.metrics.exporter=none'
+          - -Djava.io.tmpdir=/home/java-app/tmp
+          - '-jar'
+          - /home/java-app/lib/app.jar
+        envFrom:
+        - configMapRef:
+            name: demo-config
+        volumeMounts:
+          - name: sidecar
+            mountPath: /sidecar
+      initContainers:
+        - name: sidecar
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-javaagent:1.24.0
+          command:
+            - /bin/sh
+          args:
+            - '-c'
+            - cp -R /opentelemetry/agent /sidecar/
+          volumeMounts:
+            - name: sidecar
+              mountPath: /sidecar
+      volumes:
+        - name: sidecar
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: deepflow-spring-full-demo
+  name: loo-svc-full
+  labels:
+    app: loo-svc-full
+spec:
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: loo-svc-full
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loo-svc-full
+  namespace: deepflow-spring-full-demo
+spec:
+  selector:
+    matchLabels:
+      app: loo-svc-full
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loo-svc-full
+    spec:
+      containers:
+      - name: loo-svc-full
+        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/springboot-demo-loo-svc:feature-otel
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+          - name: JVM_OPTS
+            value: "-Xms256m -Xmx256m"
+          - name: OPENTRACING_JAEGER_ENABLED
+            value: "false"
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://otel-agent.open-telemetry:4317
+        command:
+          - /usr/bin/java
+        args:
+          - '-javaagent:/sidecar/agent/opentelemetry-javaagent.jar'
+          - '-Dotel.service.name=loo-svc-full'
+          - '-Dotel.traces.exporter=otlp'
+          - '-Dotel.metrics.exporter=none'
+          - -Djava.io.tmpdir=/home/java-app/tmp
+          - '-jar'
+          - /home/java-app/lib/app.jar
+        envFrom:
+        - configMapRef:
+            name: demo-config
+        volumeMounts:
+          - name: sidecar
+            mountPath: /sidecar
+      initContainers:
+        - name: sidecar
+          image: registry.cn-beijing.aliyuncs.com/deepflow-demo/opentelemetry-javaagent:1.24.0
+          command:
+            - /bin/sh
+          args:
+            - '-c'
+            - cp -R /opentelemetry/agent /sidecar/
+          volumeMounts:
+            - name: sidecar
+              mountPath: /sidecar
+      volumes:
+        - name: sidecar
+          emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+  namespace: deepflow-spring-full-demo
+  labels:
+    app: loadgenerator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loadgenerator
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+    spec:
+      containers:
+      - name: curl
+        image: docker.io/litmuschaos/curl:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -exc
+        - |
+          while true
+          do
+          curl -i foo-svc-full
+          sleep 3
+          done

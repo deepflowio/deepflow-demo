@@ -20,7 +20,7 @@ data:
           http:
     exporters:
       otlphttp:
-        traces_endpoint: "http://${HOST_IP}:38086/api/v1/otel/trace"
+        traces_endpoint: "http://deepflow-agent.deepflow/api/v1/otel/trace"
         tls:
           insecure: true
         retry_on_failure:

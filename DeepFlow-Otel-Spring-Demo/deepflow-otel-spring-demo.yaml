@@ -26,10 +26,11 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: deepflow-otel-spring-demo
----
+
 ##################################################################################################
 # Deployments
 ##################################################################################################
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,6 +46,7 @@ spec:
       labels:
         app: svc-item
         version: latest
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -89,8 +91,16 @@ spec:
           value: spring-svc-item
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://otel-agent.open-telemetry:4317
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 20880
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
@@ -130,6 +140,7 @@ spec:
       labels:
         app: svc-order
         version: latest
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -156,12 +167,15 @@ spec:
         command:
           - sh
         args:
-          - /home/docker-entrypoint.sh
-          - '-javaagent:/sidecar/agent/opentelemetry-javaagent.jar'
-          - '-Dotel.resource.attributes=service.name=order-svc'
-          - '-Dotel.traces.exporter=otlp'
-          - '-jar'
-          - /home/order-service-0.0.1-SNAPSHOT.jar
+        - /home/docker-entrypoint.sh
+        - -javaagent:/sidecar/agent/opentelemetry-javaagent.jar
+        - -Dotel.resource.attributes=service.name=order-svc
+        - -Dotel.traces.exporter=otlp
+        - -Xmx2g
+        - -Xms2g
+        - -XX:MaxDirectMemorySize=1g
+        - -jar
+        - /home/order-service-0.0.1-SNAPSHOT.jar
         imagePullPolicy: IfNotPresent
         env:
         - name: MYSQL_HOST
@@ -176,8 +190,16 @@ spec:
           value: spring-svc-order
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://otel-agent.open-telemetry:4317
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 20880
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
@@ -214,6 +236,7 @@ spec:
       labels:
         app: svc-stock
         version: latest
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -258,8 +281,16 @@ spec:
           value: spring-svc-stock
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://otel-agent.open-telemetry:4317
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 20880
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
@@ -299,6 +330,7 @@ spec:
       labels:
         app: svc-user
         version: latest
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -345,8 +377,16 @@ spec:
           value: spring-svc-user
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://otel-agent.open-telemetry:4317
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 20880
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
@@ -386,6 +426,7 @@ spec:
       labels:
         app: web-shop
         version: latest
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -408,7 +449,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: web-shop
-        image: registry.cn-beijing.aliyuncs.com/deepflow-demo/skywalking-demo_mydemo-shopweb:1.0
+        image: hub.deepflow.yunshan.net/public/skywalking-demo/mydemo-shopweb:20250421
         command:
           - sh
         args:
@@ -421,11 +462,19 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8090
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         env:
         - name: SW_AGENT_NAME
           value: spring-svc-webshop
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://otel-agent.open-telemetry:4317
+        - name: TZ
+          value: Asia/Shanghai
         volumeMounts:
           - name: sidecar
             mountPath: /sidecar
@@ -450,7 +499,7 @@ metadata:
   name: loadgenerator
   namespace: deepflow-otel-spring-demo
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: loadgenerator
@@ -491,6 +540,9 @@ spec:
               value: service.name=loadgenerator
             - name: USERS
               value: '1'
+            - name: TZ
+              value: Asia/Shanghai
+
 ##################################################################################################
 # StatefulSets
 ##################################################################################################
@@ -511,6 +563,7 @@ spec:
       labels:
         app: db-demo
         version: 5.7.18
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -538,8 +591,16 @@ spec:
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "123"
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 3306
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         readinessProbe:
           exec:
             command: ["mysql", "-hlocalhost", "-uroot", "-p123", "-P3306", "--database", "skywalking", "-e", "SELECT 1"]
@@ -563,6 +624,7 @@ spec:
       labels:
         app: nacos
         version: 1.1.4
+        demo: deepflow-otel-spring-demo
     spec:
       affinity:
         podAntiAffinity:
@@ -592,8 +654,16 @@ spec:
           value: "db-demo"
         - name: MODE
           value: standalone
+        - name: TZ
+          value: Asia/Shanghai
         ports:
         - containerPort: 8848
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: 10m
         readinessProbe:
           httpGet:
             path: /nacos
@@ -601,10 +671,11 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
----
+
 ##################################################################################################
 # ConfigMaps
 ##################################################################################################
+---
 apiVersion: v1
 data:
   application.yml: |
@@ -919,10 +990,11 @@ kind: ConfigMap
 metadata:
   name: user-service
   namespace: deepflow-otel-spring-demo
----
+
 ##################################################################################################
 # Services
 ##################################################################################################
+---
 kind: Service
 apiVersion: v1
 metadata:
@@ -964,3 +1036,60 @@ spec:
     targetPort: 3306
   selector:
     app: db-demo
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-item
+  namespace: deepflow-otel-spring-demo
+spec:
+  type: ClusterIP
+  ports:
+    - name: svc-item
+      port: 20880
+      targetPort: 20880
+  selector:
+    app: svc-item
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-order
+  namespace: deepflow-otel-spring-demo
+spec:
+  type: ClusterIP
+  ports:
+    - name: svc-order
+      port: 20880
+      targetPort: 20880
+  selector:
+    app: svc-order
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-stock
+  namespace: deepflow-otel-spring-demo
+spec:
+  type: ClusterIP
+  ports:
+    - name: svc-stock
+      port: 20880
+      targetPort: 20880
+  selector:
+    app: svc-stock
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-user
+  namespace: deepflow-otel-spring-demo
+spec:
+  type: ClusterIP
+  ports:
+    - name: svc-user
+      port: 20880
+      targetPort: 20880
+  selector:
+    app: svc-user
+
